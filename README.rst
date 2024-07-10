@@ -4,6 +4,14 @@
 
 *Not to be confused with* rustfmt_.
 
+Forked from https://github.com/dzhu/rstfmt
+
+**************************************
+ Changes from the original repository
+**************************************
+
+#.  Support ``versionadded``
+
 *************
  Description
 *************
