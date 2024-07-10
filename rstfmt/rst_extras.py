@@ -25,6 +25,13 @@ try:
 except ImportError:
     HAS_SPHINX_TABS = False
 
+try:
+    import sphinx_click
+
+    HAS_SPHINX_CLICK = True
+except ImportError:
+    HAS_SPHINX_CLICK = False
+
 
 T = TypeVar("T")
 
@@ -172,6 +179,9 @@ def register() -> None:
         _add_directive("tab", sphinx_tabs.tabs.TabDirective, raw=False)
         _add_directive("group-tab", sphinx_tabs.tabs.GroupTabDirective, raw=False)
         _add_directive("code-tab", sphinx_tabs.tabs.CodeTabDirective)
+
+    if HAS_SPHINX_CLICK:
+        _add_directive("click", sphinx_click.ext.ClickDirective)
 
     for d in set(_subclasses(autodoc.Documenter)):
         if d.objtype != "object":

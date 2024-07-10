@@ -11,6 +11,7 @@ Forked from https://github.com/dzhu/rstfmt
 **************************************
 
 #. Support ``versionadded``
+#. Support extension ``sphinx-click``
 
 *************
  Description
