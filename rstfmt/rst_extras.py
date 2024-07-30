@@ -9,9 +9,13 @@ import importlib
 from typing import Any, Dict, Iterator, List, Optional, Tuple, Type, TypeVar
 
 import docutils
+import docutils.nodes
+import docutils.utils
 import sphinx.directives.code
 import sphinx.directives.other
+import sphinx.domains.changeset
 import sphinx.ext.autodoc.directive
+import sphinx.util
 from docutils.parsers.rst import Directive, directives, roles
 
 # Import these only to load their domain subclasses.
