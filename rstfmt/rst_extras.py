@@ -20,9 +20,9 @@ from docutils.parsers.rst import Directive, directives, roles
 
 # Import these only to load their domain subclasses.
 from sphinx.domains import c, cpp, python, std  # noqa: F401
-from sphinx.ext import autodoc, todo
+from sphinx.ext import autodoc
 
-T = TypeVar("T")
+T = TypeVar('T')
 
 
 class directive(docutils.nodes.Element, docutils.nodes.Inline):
@@ -50,12 +50,12 @@ class ReferenceRole(sphinx.util.docutils.ReferenceRole):
 
 
 role_aliases = {
-    "pep": "PEP",
-    "pep-reference": "PEP",
-    "rfc": "RFC",
-    "rfc-reference": "RFC",
-    "subscript": "sub",
-    "superscript": "sup",
+    'pep': 'PEP',
+    'pep-reference': 'PEP',
+    'rfc': 'RFC',
+    'rfc-reference': 'RFC',
+    'subscript': 'sub',
+    'superscript': 'sup',
 }
 
 
@@ -81,12 +81,12 @@ def _add_directive(
     # - Override the run method to just stick the directive into the tree.
     # - Add a `raw` attribute to inform formatting later on.
     namespace = {
-        "option_spec": autodoc.directive.DummyOptionSpec(),
-        "run": lambda self: [directive(directive=self)],
-        "raw": raw,
+        'option_spec': autodoc.directive.DummyOptionSpec(),
+        'run': lambda self: [directive(directive=self)],
+        'raw': raw,
         **(attrs or {}),
     }
-    directives.register_directive(name, type("rstfmt_" + cls.__name__, (cls,), namespace))
+    directives.register_directive(name, type('rstfmt_' + cls.__name__, (cls,), namespace))
 
 
 def _add_optional_directive(directive_name, directive_cls, importlib_name):
@@ -101,56 +101,56 @@ def _add_optional_directive(directive_name, directive_cls, importlib_name):
 
 
 def _subclasses(cls: Type[T]) -> Iterator[Type[T]]:
-    for c in cls.__subclasses__():
-        yield c
-        yield from _subclasses(c)
+    for _c in cls.__subclasses__():
+        yield _c
+        yield from _subclasses(_c)
 
 
 def register() -> None:
     for r in [
         # Standard roles (https://docutils.sourceforge.io/docs/ref/rst/roles.html) that don't have
         # equivalent non-role-based markup.
-        "math",
-        "pep-reference",
-        "rfc-reference",
-        "subscript",
-        "superscript",
+        'math',
+        'pep-reference',
+        'rfc-reference',
+        'subscript',
+        'superscript',
     ]:
         roles.register_canonical_role(r, generic_role)
 
-    roles.register_canonical_role("download", ReferenceRole())
+    roles.register_canonical_role('download', ReferenceRole())
     for domain in _subclasses(sphinx.domains.Domain):
         for name, role_callable in domain.roles.items():
             if isinstance(role_callable, sphinx.util.docutils.ReferenceRole):
                 roles.register_canonical_role(name, ReferenceRole())
-                roles.register_canonical_role(f"{domain.name}:{name}", ReferenceRole())
+                roles.register_canonical_role(f'{domain.name}:{name}', ReferenceRole())
 
         for name, directive_cls in domain.directives.items():
-            _add_directive(f"{domain.name}:{name}", directive_cls)
+            _add_directive(f'{domain.name}:{name}', directive_cls)
 
     # Take the `py` domain as the implicit default. (TODO: Handle files that change the default.)
     for name, directive_cls in python.PythonDomain.directives.items():
         _add_directive(name, directive_cls)
 
     non_raw_directives = {
-        "admonition",
-        "attention",
-        "caution",
-        "danger",
-        "error",
-        "hint",
-        "important",
-        "note",
-        "tip",
-        "warning",
+        'admonition',
+        'attention',
+        'caution',
+        'danger',
+        'error',
+        'hint',
+        'important',
+        'note',
+        'tip',
+        'warning',
         # `list-table` directives are parsed into table nodes by default and could be formatted as
         # such, but that's vulnerable to producing malformed tables when the given column widths are
         # too small, so keep them as directives.
-        "list-table",
-        "tabs",
-        "tab",
-        "group-tab",
-        "code-tab",
+        'list-table',
+        'tabs',
+        'tab',
+        'group-tab',
+        'code-tab',
     }
 
     # The role directive is defined in a rather odd way under the hood: although it appears to take
@@ -159,27 +159,27 @@ def register() -> None:
     # the content. I'm not entirely sure why, but I think it's to handle the case of using some
     # exotic base role that has a body or something. I think just taking an argument is pretty much
     # good enough, though.
-    _add_directive("role", Directive, attrs={"required_arguments": 1})
-    exclude_directives = {"role"}
+    _add_directive('role', Directive, attrs={'required_arguments': 1})
+    exclude_directives = {'role'}
 
     for directive_name, (module, cls_name) in directives._directive_registry.items():
         if directive_name in exclude_directives:
             continue
-        module = importlib.import_module(f"docutils.parsers.rst.directives.{module}")
+        module = importlib.import_module(f'docutils.parsers.rst.directives.{module}')
         cls = getattr(module, cls_name)
         _add_directive(directive_name, cls, raw=directive_name not in non_raw_directives)
 
-    _add_directive("glossary", std.Glossary, raw=False)
-    _add_directive("literalinclude", sphinx.directives.code.LiteralInclude)
-    _add_directive("toctree", sphinx.directives.other.TocTree)
-    _add_directive("versionadded", sphinx.domains.changeset.VersionChange)
+    _add_directive('glossary', std.Glossary, raw=False)
+    _add_directive('literalinclude', sphinx.directives.code.LiteralInclude)
+    _add_directive('toctree', sphinx.directives.other.TocTree)
+    _add_directive('versionadded', sphinx.domains.changeset.VersionChange)
     _add_directive('only', sphinx.directives.other.Only)
     _add_directive('highlight', sphinx.directives.code.Highlight)
     _add_directive('todo', sphinx.ext.todo.Todo)
 
     for d in set(_subclasses(autodoc.Documenter)):
-        if d.objtype != "object":
-            _add_directive("auto" + d.objtype, autodoc.directive.AutodocDirective, raw=False)
+        if d.objtype != 'object':
+            _add_directive('auto' + d.objtype, autodoc.directive.AutodocDirective, raw=False)
 
     #####################
     # optional packages #
@@ -189,33 +189,31 @@ def register() -> None:
     except ImportError:
         pass
     else:
-        _add_directive("tabs", sphinx_tabs.tabs.TabsDirective, raw=False)
-        _add_directive("tab", sphinx_tabs.tabs.TabDirective, raw=False)
-        _add_directive("group-tab", sphinx_tabs.tabs.GroupTabDirective, raw=False)
-        _add_directive("code-tab", sphinx_tabs.tabs.CodeTabDirective)
+        _add_directive('tabs', sphinx_tabs.tabs.TabsDirective, raw=False)
+        _add_directive('tab', sphinx_tabs.tabs.TabDirective, raw=False)
+        _add_directive('group-tab', sphinx_tabs.tabs.GroupTabDirective, raw=False)
+        _add_directive('code-tab', sphinx_tabs.tabs.CodeTabDirective)
 
     try:
         import sphinx_click
     except ImportError:
         pass
     else:
-        _add_directive("click", sphinx_click.ext.ClickDirective)
+        _add_directive('click', sphinx_click.ext.ClickDirective)
 
     try:
         import sphinxarg.ext
     except ImportError:
         pass
     else:
-        _add_directive("argparse", sphinxarg.ext.ArgParseDirective)
+        _add_directive('argparse', sphinxarg.ext.ArgParseDirective)
 
     try:
-        import esp_docs
+        from esp_docs.esp_extensions.include_build_file import IncludeBuildFile
+        from esp_docs.generic_extensions.list_filter import ListFilter
     except ImportError:
         pass
     else:
-        from esp_docs.esp_extensions.include_build_file import IncludeBuildFile
-        from esp_docs.generic_extensions.list_filter import ListFilter
-
         roles.register_canonical_role('project', ReferenceRole())
         roles.register_canonical_role('project_file', ReferenceRole())
         roles.register_canonical_role('project_raw', ReferenceRole())

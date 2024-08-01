@@ -1,2 +1,21 @@
-[tool.black]
-line-length = 100
+[tool.ruff]
+line-length = 120
+target-version = "py37"
+
+[tool.ruff.lint]
+select = [
+    'F',  # Pyflakes
+    'E',  # pycodestyle
+    'W',  # pycodestyle
+    'I',  # isort
+    'UP',  # pyupgrade
+    'YTT',  # flake8-2020
+    'A',  # flake8-builtins
+    'ERA',  # eradicate
+    'FURB',  # refurb
+    'LOG',  # flake8-logging
+]
+
+[tool.ruff.format]
+quote-style = "single"
+docstring-code-format = true
