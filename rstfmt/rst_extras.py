@@ -20,22 +20,7 @@ from docutils.parsers.rst import Directive, directives, roles
 
 # Import these only to load their domain subclasses.
 from sphinx.domains import c, cpp, python, std  # noqa: F401
-from sphinx.ext import autodoc
-
-try:
-    import sphinx_tabs.tabs
-
-    HAS_SPHINX_TABS = True
-except ImportError:
-    HAS_SPHINX_TABS = False
-
-try:
-    import sphinx_click
-
-    HAS_SPHINX_CLICK = True
-except ImportError:
-    HAS_SPHINX_CLICK = False
-
+from sphinx.ext import autodoc, todo
 
 T = TypeVar("T")
 
@@ -102,6 +87,17 @@ def _add_directive(
         **(attrs or {}),
     }
     directives.register_directive(name, type("rstfmt_" + cls.__name__, (cls,), namespace))
+
+
+def _add_optional_directive(directive_name, directive_cls, importlib_name):
+    try:
+        module = importlib.import_module(importlib_name)
+    except ImportError:
+        pass
+    else:
+        _cls = getattr(module, directive_cls, None)
+        if _cls:
+            _add_directive(directive_name, _cls)
 
 
 def _subclasses(cls: Type[T]) -> Iterator[Type[T]]:
@@ -177,19 +173,33 @@ def register() -> None:
     _add_directive("literalinclude", sphinx.directives.code.LiteralInclude)
     _add_directive("toctree", sphinx.directives.other.TocTree)
     _add_directive("versionadded", sphinx.domains.changeset.VersionChange)
+    _add_directive('only', sphinx.directives.other.Only)
+    _add_directive('highlight', sphinx.directives.code.Highlight)
+    _add_directive('todo', sphinx.ext.todo.Todo)
 
-    if HAS_SPHINX_TABS:
+    for d in set(_subclasses(autodoc.Documenter)):
+        if d.objtype != "object":
+            _add_directive("auto" + d.objtype, autodoc.directive.AutodocDirective, raw=False)
+
+    #####################
+    # optional packages #
+    #####################
+    try:
+        import sphinx_tabs.tabs
+    except ImportError:
+        pass
+    else:
         _add_directive("tabs", sphinx_tabs.tabs.TabsDirective, raw=False)
         _add_directive("tab", sphinx_tabs.tabs.TabDirective, raw=False)
         _add_directive("group-tab", sphinx_tabs.tabs.GroupTabDirective, raw=False)
         _add_directive("code-tab", sphinx_tabs.tabs.CodeTabDirective)
 
-    if HAS_SPHINX_CLICK:
+    try:
+        import sphinx_click
+    except ImportError:
+        pass
+    else:
         _add_directive("click", sphinx_click.ext.ClickDirective)
-
-    for d in set(_subclasses(autodoc.Documenter)):
-        if d.objtype != "object":
-            _add_directive("auto" + d.objtype, autodoc.directive.AutodocDirective, raw=False)
 
     try:
         import sphinxarg.ext
@@ -197,3 +207,46 @@ def register() -> None:
         pass
     else:
         _add_directive("argparse", sphinxarg.ext.ArgParseDirective)
+
+    try:
+        import esp_docs
+    except ImportError:
+        pass
+    else:
+        from esp_docs.esp_extensions.include_build_file import IncludeBuildFile
+        from esp_docs.generic_extensions.list_filter import ListFilter
+
+        roles.register_canonical_role('project', ReferenceRole())
+        roles.register_canonical_role('project_file', ReferenceRole())
+        roles.register_canonical_role('project_raw', ReferenceRole())
+
+        # These are the same as :project:, but kept for backwards compatibility reasons
+        roles.register_canonical_role('idf', ReferenceRole())
+        roles.register_canonical_role('idf_file', ReferenceRole())
+        roles.register_canonical_role('idf_raw', ReferenceRole())
+
+        roles.register_canonical_role('component', ReferenceRole())
+        roles.register_canonical_role('component_file', ReferenceRole())
+        roles.register_canonical_role('component_raw', ReferenceRole())
+
+        roles.register_canonical_role('example', ReferenceRole())
+        roles.register_canonical_role('example_file', ReferenceRole())
+        roles.register_canonical_role('example_raw', ReferenceRole())
+
+        roles.register_canonical_role('link_to_translation', ReferenceRole())
+
+        _add_directive('include-build-file', IncludeBuildFile)
+        _add_directive('list', ListFilter)
+
+    _add_optional_directive('blockdiag', 'Blockdiag', 'sphinxcontrib.blockdiag')
+
+    _add_optional_directive('packetdiag', 'Packetdiag', 'sphinxcontrib.packetdiag')
+
+    _add_optional_directive('rackdiag', 'Rackdiag', 'sphinxcontrib.rackdiag')
+
+    _add_optional_directive('seqdiag', 'Seqdiag', 'sphinxcontrib.seqdiag')
+
+    _add_optional_directive('wavedrom', 'WavedromDirective', 'sphinxcontrib.wavedrom')
+
+    _add_optional_directive('doxygenstruct', 'DoxygenClassDirective', 'breathe.directives.class_like')
+    _add_optional_directive('doxygenfunction', 'DoxygenFunctionDirective', 'breathe.directives.function')

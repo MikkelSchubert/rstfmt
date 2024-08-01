@@ -10,8 +10,22 @@ Forked from https://github.com/dzhu/rstfmt
  Changes from the original repository
 **************************************
 
-#. Support ``versionadded``
-#. Support extension ``sphinx-click``
+-  Newly Support Std Keywords
+
+   -  ``versionadded``
+   -  ``only``
+   -  ``highlight``
+   -  ``todo``
+
+-  Newly Supported Extensions
+
+   -  ``sphinx-click``
+   -  ``sphinxcontrib.blockdiag``
+   -  ``sphinxcontrib.packetdiag``
+   -  ``sphinxcontrib.rackdiag``
+   -  ``sphinxcontrib.seqdiag``
+   -  ``sphinxcontrib.wavedrom``
+   -  ``breathe``
 
 *************
  Description
