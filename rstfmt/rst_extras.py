@@ -20,7 +20,7 @@ from docutils.parsers.rst import Directive, directives, roles
 
 # Import these only to load their domain subclasses.
 from sphinx.domains import c, cpp, python, std  # noqa: F401
-from sphinx.ext import autodoc
+from sphinx.ext import autodoc, todo
 
 T = TypeVar('T')
 
