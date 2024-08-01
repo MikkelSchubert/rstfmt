@@ -50,10 +50,32 @@ To get a feel for the output of rstfmt, see `the sample file
  Usage
 *******
 
+With pre-commit hook
+====================
+
+.. code:: yaml
+
+   repos:
+     - repo: https://github.com/hfudev/rstfmt
+       rev: v0.1.2  # check latest version
+       hooks:
+         - id: rstfmt
+           args: ["-w", "-1"]
+           files: "docs\/.+rst$"
+           additional_dependencies: [
+             # don't forget to add your extensions here
+             # for example
+             "sphinx_tabs",
+             "sphinx-click",
+           ]
+
+In Shell
+========
+
 .. code:: sh
 
    # Install directly from the repository.
-   pip install git+https://github.com/dzhu/rstfmt
+   pip install git+https://github.com/hfudev/rstfmt
 
    # Install from PyPI.
    pip install rstfmt
@@ -84,7 +106,7 @@ on every run.
 .. code:: sh
 
    # Install.
-   pip install 'git+https://github.com/dzhu/rstfmt#egg=rstfmt[d]'
+   pip install 'git+https://github.com/hfudev/rstfmt#egg=rstfmt[d]'
    pip install 'rstfmt[d]'
 
    # Start the daemon (binds to localhost:5219 by default).
