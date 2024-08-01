@@ -14,13 +14,14 @@ import docutils.utils
 import sphinx.directives.code
 import sphinx.directives.other
 import sphinx.domains.changeset
+import sphinx.ext.autodoc
 import sphinx.ext.autodoc.directive
-import sphinx.util
+import sphinx.ext.todo
+import sphinx.util.docutils
 from docutils.parsers.rst import Directive, directives, roles
 
 # Import these only to load their domain subclasses.
 from sphinx.domains import c, cpp, python, std  # noqa: F401
-from sphinx.ext import autodoc, todo
 
 T = TypeVar('T')
 
@@ -81,7 +82,7 @@ def _add_directive(
     # - Override the run method to just stick the directive into the tree.
     # - Add a `raw` attribute to inform formatting later on.
     namespace = {
-        'option_spec': autodoc.directive.DummyOptionSpec(),
+        'option_spec': sphinx.ext.autodoc.directive.DummyOptionSpec(),
         'run': lambda self: [directive(directive=self)],
         'raw': raw,
         **(attrs or {}),
@@ -177,9 +178,9 @@ def register() -> None:
     _add_directive('highlight', sphinx.directives.code.Highlight)
     _add_directive('todo', sphinx.ext.todo.Todo)
 
-    for d in set(_subclasses(autodoc.Documenter)):
+    for d in set(_subclasses(sphinx.ext.autodoc.Documenter)):
         if d.objtype != 'object':
-            _add_directive('auto' + d.objtype, autodoc.directive.AutodocDirective, raw=False)
+            _add_directive('auto' + d.objtype, sphinx.ext.autodoc.directive.AutodocDirective, raw=False)
 
     #####################
     # optional packages #
