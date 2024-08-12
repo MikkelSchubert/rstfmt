@@ -249,3 +249,5 @@ def register() -> None:
 
     _add_optional_directive('doxygenstruct', 'DoxygenClassDirective', 'breathe.directives.class_like')
     _add_optional_directive('doxygenfunction', 'DoxygenFunctionDirective', 'breathe.directives.function')
+
+    _add_optional_directive('mermaid', 'Mermaid', 'sphinxcontrib.mermaid')

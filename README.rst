@@ -21,6 +21,7 @@ Forked from https://github.com/dzhu/rstfmt
 
    -  ``sphinx-click``
    -  ``sphinxcontrib.blockdiag``
+   -  ``sphinxcontrib.mermaid``
    -  ``sphinxcontrib.packetdiag``
    -  ``sphinxcontrib.rackdiag``
    -  ``sphinxcontrib.seqdiag``
